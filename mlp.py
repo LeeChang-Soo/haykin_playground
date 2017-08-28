@@ -227,3 +227,8 @@ class circleClf4(circleClf2):
 
     def act_fn(self, in_tensor):
         return tf.nn.relu(in_tensor)
+
+class circleClf5(circleClf4, circleClf3):
+
+    def get_tag(self):
+        return 'relu_initialization_optimized' + ('_normalized' if self.normalize else '_not_normalized')
