@@ -38,6 +38,7 @@ class circleClf(object):
     def __init__(self, max_epoch=50, normalize=True):
         self.normalize = normalize
         with tf.name_scope(self.get_tag()) as scope:
+            hidden = 20
             self.max_epoch = max_epoch
             self.global_step = tf.Variable(0, trainable=False)
             self.set_learning_rate()
@@ -45,12 +46,12 @@ class circleClf(object):
             self.input_layer = tf.placeholder(tf.float32, [None, 2], name='input')
             self.label_layer = tf.placeholder(tf.int32, [None, 1], name='label')
 
-            self.w1 = tf.Variable(self.initializer([2, 20], 2))
-            self.b1 = tf.Variable(self.initializer([20], 2))
+            self.w1 = tf.Variable(self.initializer([2, hidden], 2))
+            self.b1 = tf.Variable(self.initializer([hidden], 2))
             tf.summary.histogram('w1', self.w1)
 
-            self.w2 = tf.Variable(self.initializer([20, 1], 20))
-            self.b2 = tf.Variable(self.initializer([1], 20))
+            self.w2 = tf.Variable(self.initializer([hidden, 1], hidden))
+            self.b2 = tf.Variable(self.initializer([1], hidden))
             tf.summary.histogram('w2', self.w2)
 
             # network construction
