@@ -35,11 +35,22 @@ def make_regionA(r, w, n):
             n_tmp += 1
     return (xs, ys)
 
+def translateA2Asub(regionA, r, d):
+    xs_A, ys_A = regionA
+    xs_Asub = [x for x in xs_A]
+    ys_Asub = [y + 4*d for y in ys_A]
+    return (xs_Asub, ys_Asub)
+
+def make_regionA_sub(r, w, n, d):
+    regionA = make_regionA(r, w, n)
+    regionAsub = translateA2Asub(regionA, r, d)
+    return regionAsub
+
 def translateA2B(regionA, r, d):
     xs_A, ys_A = regionA
     xs_B = [x + r for x in xs_A]
     ys_B = [-y - d for y in ys_A]
-    return xs_B, ys_B
+    return (xs_B, ys_B)
 
 def make_regionB(r, w, d, n):
     regionA = make_regionA(r, w, n)
@@ -50,6 +61,34 @@ def gen_circles(r, w, d, n):
     regionA = make_regionA(r, w, n)
     regionB = make_regionB(r, w, d, n)
     return regionA, regionB
+
+def merge_regions(region1, region2):
+    xs_1, ys_1 = region1
+    xs_2, ys_2 = region2
+    return (xs_1 + xs_2), (ys_1 + ys_2)
+
+def gen_circles2(r, w, d, n):
+    regionA = make_regionA(r, w, n/2)
+    regionAsub = make_regionA_sub(r, w, n/2, d)
+    regionB = make_regionB(r, w, d, n)
+    return merge_regions(regionA, regionAsub), regionB
+
+def normalize_region(region, avg, stddev):
+    xs, ys = region
+
+def normalize_data(data):
+    data = np.array(data)
+    avg = np.average(data, axis=0)
+    stddev = np.std(data, axis=0)
+    data_normalized = (data - avg) / stddev
+    return data_normalized, avg, stddev
+
+def get_avg_std(regionA, regionB):
+    data_A = zip(*regionA)
+    data_B = zip(*regionB)
+    data = data_A + data_B
+    _, avg, stddev = normalize_data(data)
+    return avg, stddev
 
 def make_a_epoch(regionA, regionB):
     '''
@@ -86,6 +125,15 @@ def make_decision_line(sess, output_layer):
         #  index = np.argmin(output_values)
         #  ys_res.append(ys[index])
     #  return xs, ys_res
+
+def get_max_min(regionA, regionB):
+    xs_A, ys_A = regionA
+    xs_B, ys_B = regionB
+    min_x = min(xs_A + xs_B)
+    max_x = max(xs_A + xs_B)
+    min_y = min(ys_A + ys_B)
+    max_y = max(ys_A + ys_B)
+    return min_x, max_x, min_y, max_y
 
 if __name__ == '__main__':
     pp(regionA(3, 1, 1000))
