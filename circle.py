@@ -63,6 +63,13 @@ def make_a_epoch(regionA, regionB):
     random.shuffle(data_label_pairs_all)
     return data_label_pairs_all
 
+def test_batch(regionA, regionB):
+    data_A = zip(*regionA)
+    data_B = zip(*regionB)
+    data = data_A + data_B
+    labels = [[-1]]*len(data_A) + [[1]]*len(data_B)
+    return data, labels
+
 def make_decision_line(sess, output_layer):
     xs = np.linspace(-15, 25, 1)
     ys = np.linspace(-10, 15, 0.1)
